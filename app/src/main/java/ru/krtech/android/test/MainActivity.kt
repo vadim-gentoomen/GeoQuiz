@@ -8,6 +8,8 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 
 private const val TAG = "MainActivity"
 
@@ -34,6 +36,10 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "onCreate(Bundle?) called")
         setContentView(R.layout.activity_main)
 
+        val provider: ViewModelProvider = ViewModelProviders.of(this)
+        val quizViewModel = provider.get(QuizViewModel::class.java)
+        Log.d(TAG, "Got a QuizViewModel:$quizViewModel")
+
         trueButton = findViewById(R.id.true_button)
         falseButton = findViewById(R.id.false_button)
         prevButton = findViewById(R.id.previous_button)
@@ -45,7 +51,8 @@ class MainActivity : AppCompatActivity() {
             checkAnswer(true)
         }
 
-        falseButton.setOnClickListener {Log.d(TAG, "FALSE")
+        falseButton.setOnClickListener {
+            Log.d(TAG, "FALSE")
 
             checkAnswer(false)
         }

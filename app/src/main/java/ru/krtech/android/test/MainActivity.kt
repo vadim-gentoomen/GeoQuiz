@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var falseButton: Button
     private lateinit var prevButton: ImageButton
     private lateinit var nextButton: ImageButton
+    private lateinit var cheatButton: Button
     private lateinit var questionTextView: TextView
 
     private val quizViewModel: QuizViewModel by lazy {
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity() {
         falseButton = findViewById(R.id.false_button)
         prevButton = findViewById(R.id.previous_button)
         nextButton = findViewById(R.id.next_button)
+        cheatButton = findViewById(R.id.cheat_button)
         questionTextView = findViewById(R.id.question_text_view)
 
         trueButton.setOnClickListener {
@@ -46,6 +48,15 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "FALSE")
 
             checkAnswer(false)
+        }
+
+        cheatButton.setOnClickListener {
+            Log.d(TAG, "CHEAT")
+
+            val answerIsTrue = quizViewModel.currentQuestionAnswer
+            val intent = CheatActivity.newIntent(this@MainActivity, answerIsTrue)
+            intent.putExtra("test", "TEST")
+            startActivity(intent)
         }
 
         prevButton.setOnClickListener {
@@ -80,7 +91,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(savedInstanceState: Bundle) {
         super.onSaveInstanceState(savedInstanceState)
-        Log.d(TAG, "onSaveInstanceState)() called")
+        Log.d(TAG, "onSaveInstanceState() called")
         savedInstanceState.putInt(KEY_INDEX, quizViewModel.currentIndex)
     }
 

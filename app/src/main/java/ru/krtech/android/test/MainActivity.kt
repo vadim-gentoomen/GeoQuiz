@@ -2,9 +2,7 @@ package ru.krtech.android.test
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.ActivityOptions
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -12,7 +10,10 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.ViewModelProvider
 
 private const val TAG = "MainActivity"
@@ -58,18 +59,31 @@ class MainActivity : AppCompatActivity() {
             checkAnswer(false)
         }
 
-        cheatButton.setOnClickListener {view: View ->
+        var launchCheatActivity =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+                if (result.resultCode == Activity.RESULT_OK) {
+//                    val intent: Intent? = result.data
+                    val answerIsTrue = quizViewModel.currentQuestionAnswer
+                    val intent = CheatActivity.newIntent(this@MainActivity, answerIsTrue)
+                    // your operation...
+                }
+            }
+
+        cheatButton.setOnClickListener { view: View ->
             Log.d(TAG, "CHEAT")
 
             val answerIsTrue = quizViewModel.currentQuestionAnswer
             val intent = CheatActivity.newIntent(this@MainActivity, answerIsTrue)
-            intent.putExtra("test", "TEST")
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val options = ActivityOptionsCompat.makeClipRevealAnimation(view, 0, 0, view.width, view.height)
+            startActivityForResult(intent, REQUEST_CODE_CHEAT, options.toBundle())
+//            launchCheatActivity.launch(intent, options)
+
+            /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 val options = ActivityOptions.makeClipRevealAnimation(view, 0, 0, view.width, view.height)
                 startActivityForResult(intent, REQUEST_CODE_CHEAT, options.toBundle())
             }else {
                 startActivityForResult(intent, REQUEST_CODE_CHEAT)
-            }
+            }*/
         }
 
         prevButton.setOnClickListener {
@@ -116,6 +130,15 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == REQUEST_CODE_CHEAT) {
             quizViewModel.isCheater = data?.getBooleanExtra(EXTRA_ANSWER_SHOWN, false) ?: false
         }
+
+/*        when (requestCode) {
+            REQUEST_CODE_CHEAT -> {
+                if (resultCode == RESULT_OK && data != null) {
+                    quizViewModel.isCheater = data?.getBooleanExtra(EXTRA_ANSWER_SHOWN, false) ?: false
+                }
+            }
+            else -> super.onActivityResult(requestCode, resultCode, data)
+        }*/
     }
 
     override fun onStop() {

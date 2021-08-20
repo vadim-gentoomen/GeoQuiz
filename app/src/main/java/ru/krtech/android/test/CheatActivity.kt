@@ -23,6 +23,8 @@ class CheatActivity : AppCompatActivity() {
         setContentView(R.layout.activity_cheat)
 
         answerIsTrue = intent.getBooleanExtra(EXTRA_ANSWER_IS_TRUE, false)
+        Log.d(TAG, intent.getBooleanExtra(EXTRA_ANSWER_IS_TRUE, false).toString())
+        Log.d(TAG, intent.getStringExtra("test")!!)
         answerTextView = findViewById(R.id.answer_text_view)
         showAnswerButton = findViewById(R.id.show_answer_button)
 
@@ -47,6 +49,7 @@ class CheatActivity : AppCompatActivity() {
         fun newIntent(packageContext: Context, answerIsTrue: Boolean): Intent {
             return Intent(packageContext, CheatActivity::class.java).apply {
                 putExtra(EXTRA_ANSWER_IS_TRUE, answerIsTrue)
+                putExtra("test", "Hello World")
             }
         }
     }

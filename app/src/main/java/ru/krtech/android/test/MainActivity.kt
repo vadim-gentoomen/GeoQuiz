@@ -1,9 +1,13 @@
 package ru.krtech.android.test
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
@@ -28,6 +32,7 @@ class MainActivity : AppCompatActivity() {
         ViewModelProvider(this).get(QuizViewModel::class.java)
     }
 
+    @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate(Bundle?) called")
@@ -53,13 +58,18 @@ class MainActivity : AppCompatActivity() {
             checkAnswer(false)
         }
 
-        cheatButton.setOnClickListener {
+        cheatButton.setOnClickListener {view: View ->
             Log.d(TAG, "CHEAT")
 
             val answerIsTrue = quizViewModel.currentQuestionAnswer
             val intent = CheatActivity.newIntent(this@MainActivity, answerIsTrue)
             intent.putExtra("test", "TEST")
-            startActivityForResult(intent, REQUEST_CODE_CHEAT)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val options = ActivityOptions.makeClipRevealAnimation(view, 0, 0, view.width, view.height)
+                startActivityForResult(intent, REQUEST_CODE_CHEAT, options.toBundle())
+            }else {
+                startActivityForResult(intent, REQUEST_CODE_CHEAT)
+            }
         }
 
         prevButton.setOnClickListener {
